@@ -2,6 +2,17 @@ import cv2
 from deepface import DeepFace
 
 
+from pyfirmata import Arduino, util, STRING_DATA
+import time
+
+Uno = Arduino('/dev/ttyUSB0')
+Uno.send_sysex( STRING_DATA, util.str_to_two_byte_iter('Hello!') )
+
+def msg(texto):
+    if(texto):
+        Uno.send_sysex( STRING_DATA, util.str_to_two_byte_iter(texto) )
+
+
 # Load face cascade classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -41,6 +52,9 @@ while True:
     # Display the resulting frame
     cv2.imshow('Real-time Emotion Detection', frame)
 
+    msg(emotion)
+    time.sleep(0.08)
+    
     # Press 'q' to exit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
